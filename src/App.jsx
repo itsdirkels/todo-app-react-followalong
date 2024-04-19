@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./styles.css";
+import { NewToDoForm } from "./newToDoForm";
+import { TodoList } from "./TodoList";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [todos, setTodos] = useState([]);
+
+  const addTodo = title => {
+    setTodos(currentValue => {
+      return [
+        ...currentValue,
+        { id: crypto.randomUUID(), title, completed:false}
+      ]
+    });
+  }
+
+  const toggleTodo = (id, completed) => {
+    setTodos(currentValue => {
+      return currentValue.map(todo => {
+        if (todo.id === id) {
+          return {...todo, completed}
+        }
+        return todo;
+      });
+    });
+  }
+
+  const deleteTodo = (id) => {
+    setTodos(currentValue => {
+      return currentValue.filter(todo => todo.id !== id);
+  });
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+  <>
+    <NewToDoForm onSubmit={addTodo}/>
+    <h1 className="header">Todo List</h1>
+    <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo}/>
+  </>
   )
 }
-
-export default App
